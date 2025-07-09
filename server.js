@@ -14,20 +14,40 @@ const realisateurs = require('./data/realisateurs.json');
 
 // Route d'accueil
 app.get('/', (req, res) => {
-  //TODO : RENVOYER UN MESSAGE 🎬 Bienvenue au CineClub API !
 
+  //TODO : RENVOYER UN MESSAGE 🎬 Bienvenue au CineClub API !
+ res.setHeader('content-type','text/plain')
+    res.end(' Bienvenue au CineClub API !')
 });
 
 // GET /films — tous les films
     //TODO : Renvoyer le json films
+    app.get('/films',(req,res)=>{
+       
+        res.json(films)
+    })
 
 
 // GET /realisateurs
     //TODO : Renvoyer le json realisateurs
-
+    app.get('/realisateurs',(req,res)=>{
+       
+        res.json(realisateurs)
+    })
 
 // GET /films/:id — détail d'un film
   // TODO : récupérer l'id et renvoyer le json du film correspondant
+  
+  app.get('/films/:id',(req,res)=>{
+    const id=parseInt(req.params.id)
+    const film=(films.find(f =>f.id===id))
+    if (!film){
+        
+        res.status(404).send('movie not found')
+    }else{
+        res.json(film).status(200)
+    }
+ })
   // HINT : parseInt() permet de transformer le paramètre en int
   // HINT : la fonction .find(f => f.id === filmId) permet de renvoyer le résultat de la recherche selon condition 
   // BONUS : faire une condition qui renvoie un statut 404 avec le message('Film non trouvé') si l'object est vide 
@@ -41,6 +61,23 @@ app.get('/', (req, res) => {
     //HINT : 3. Utiliser la méthode fs.writeFileSync(dataPath, JSON.stringify(films)); pour enregistrer le résultat
     //HINT : 4. Renvoyer un status code 204('No content') et un res.end()
     //BONUS : vérifier que le film existe bien avant de le supprimer
+
+ 
+const myPath = path.join(__dirname, '/data/films.json');
+
+app.delete('/films/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const film = films.find(f => f.id === id); 
+    if (film === -1) {
+        res.status(404).send('Film not found');
+    } else {
+        films.splice(film, 1); 
+        fs.writeFileSync(myPath, JSON.stringify(films));
+        res.status(204).end();
+    }
+});
+
+
 
 
 
