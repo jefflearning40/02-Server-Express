@@ -53,28 +53,32 @@ app.get('/', (req, res) => {
   // BONUS : faire une condition qui renvoie un statut 404 avec le message('Film non trouvé') si l'object est vide 
 
 
-//DELETE /film/:id - Supression d'un film
+    //DELETE /film/:id - Supression d'un film
     //TODO : supression d'un film selon son id
     //HINT : 1. Parser le paramètre id
     //HINT : 2. Utiliser la méthode .splice(index, howMany) pour supprimer d'un array
-    //HINT : par exemple film.splice(0,1) retire le premier élément de l'array films[]
+    //HINT : par exemple film.splice(0,1) retire le premier     élément de l'array films[]
     //HINT : 3. Utiliser la méthode fs.writeFileSync(dataPath, JSON.stringify(films)); pour enregistrer le résultat
     //HINT : 4. Renvoyer un status code 204('No content') et un res.end()
     //BONUS : vérifier que le film existe bien avant de le supprimer
 
- 
-const myPath = path.join(__dirname, '/data/films.json');
+ myDataPath=path.join(__dirname,'films.json')
 
-app.delete('/films/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const film = films.find(f => f.id === id); 
-    if (film === -1) {
-        res.status(404).send('Film not found');
-    } else {
-        films.splice(film, 1); 
-        fs.writeFileSync(myPath, JSON.stringify(films));
-        res.status(204).end();
+app.delete('/film/:id', (req, res) => {
+    const id = parseInt(req.params.id); 
+    const index = films.find(f => f.id === id); 
+    
+    if (!index === -1) {
+        return res.status(404).send('Film non trouvé'); 
     }
+    films.splice(0,1);
+    try {
+       fs.writeFileSync(myDataPath, JSON.stringify(films));
+        res.status(204).end("ok !"); 
+    } catch (err) {
+        return res.status(500).send('Erreur'); 
+    }
+    
 });
 
 
